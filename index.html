@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <title>바비 밥 체크</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h2>바비 밥 시간 체크</h2>
+        </div>
+        <canvas id="canvas" width="500px" height="500px"></canvas>
+        <form action="/add" method="post" id="formSubmit">
+            <input type="text" name="year" id="year" style="display: none;">
+            <input type="text" name="month" id="month" style="display: none;">
+            <input type="text" name="date" id="date" style="display: none;">
+            <input type="text" name="hour" id="hour" style="display: none;">
+            <input type="text" name="minute" id="minute" style="display: none;">
+            <button type="button" class="btn btn-primary" id="checkBtn">밥 체크</button>
+            <button type="button" class="btn btn-secondary" id="listBtn">리스트</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('checkBtn').addEventListener('click', () => {
+            let today = new Date()
+
+            let year = today.getFullYear()
+            let month = today.getMonth() + 1
+            let date = today.getDate()
+            let hour = today.getHours()
+            let minute = today.getMinutes()
+
+            let fullDate = year + "-" + month + "-" + date + " " + hour + ":" + minute
+            console.log(fullDate)
+
+            document.getElementById('year').value = year
+            document.getElementById('month').value = month
+            document.getElementById('date').value = date
+            document.getElementById('hour').value = hour
+            document.getElementById('minute').value = minute
+
+            document.getElementById('formSubmit').submit()
+        })
+        document.getElementById('listBtn').addEventListener('click', () => {
+            location.href = '/list'
+        })
+    </script>
+
+    <!-- 이하 three.js 라이브러리 적용 -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.141.0/build/three.module.js",
+                "GLTFLoader" : "https://unpkg.com/three@0.141.0/examples/jsm/loaders/GLTFLoader.js"
+            }
+        }
+    </script>
+    <script type="module">
+        import { GLTFLoader } from 'GLTFLoader'
+        import * as THREE from 'three'
+        
+        let scene = new THREE.Scene()
+        let renderer = new THREE.WebGLRenderer({
+            canvas : document.querySelector('#canvas'),
+            antialias : true
+        })
+        renderer.outputEncoding = THREE.sRGBEncoding
+
+        let camera = new THREE.PerspectiveCamera(40, 1)
+        camera.position.set(0, 0, 5)
+
+        scene.background = new THREE.Color('white')
+        let light = new THREE.DirectionalLight(0xffff00, 10)
+        scene.add(light)
+
+        let loader = new GLTFLoader()
+        loader.load('/dog/scene.gltf', (param) => {
+            scene.add(param.scene)
+            function animate() {
+                requestAnimationFrame(animate)
+                param.scene.rotation.y -= 0.003
+                renderer.render(scene, camera)
+            }
+            animate()
+        })
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>
