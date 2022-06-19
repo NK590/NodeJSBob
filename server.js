@@ -17,7 +17,25 @@ MongoClient.connect('mongodb+srv://kim8850917:xlrkfprtm0917@cluster0.coqpn.mongo
 })
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html')
+    db.collection('bobby').find().toArray((error, result) => {
+        if (error) return console.log(error)
+        console.log(result)
+
+        let bobCount = 0
+        let today = new Date()
+
+        let year = today.getFullYear()
+        let month = today.getMonth() + 1
+        let date = today.getDate()
+        
+        for (let i = 0; i < result.length; i++) {
+            if (parseInt(result[i].년) === year && parseInt(result[i].월) === month && parseInt(result[i].일) === date) {
+                bobCount++
+            }
+        }
+        console.log(bobCount)
+        res.render('index.ejs', { count : bobCount })
+    })
 }) 
 
 app.get('/list', (req, res) => {

@@ -10,9 +10,10 @@
 <body>
     <div class="container">
         <div class="row">
-            <h2>바비 밥 시간 체크</h2>
+            <h2>바비 밥 시간 체크 앱</h2>
         </div>
         <canvas id="canvas" width="400px" height="400px"></canvas>
+        <h3>오늘 밥 준 횟수 : <%= count %></h3>
         <form action="/add" method="post" id="formSubmit">
             <input type="text" name="year" id="year" style="display: none;">
             <input type="text" name="month" id="month" style="display: none;">
@@ -24,6 +25,10 @@
         </form>
     </div>
     <script>
+        const count = parseInt("<%= count %>")
+        if (count >= 4) {
+            document.getElementById('checkBtn').disabled = true
+        }
         document.getElementById('checkBtn').addEventListener('click', () => {
             let today = new Date()
 
@@ -42,7 +47,10 @@
             document.getElementById('hour').value = hour
             document.getElementById('minute').value = minute
 
-            document.getElementById('formSubmit').submit()
+            let confirmForm = confirm('사료를 주겠습니까?')
+            if (confirmForm) {
+                document.getElementById('formSubmit').submit()
+            }
         })
         document.getElementById('listBtn').addEventListener('click', () => {
             location.href = '/list'
